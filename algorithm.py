@@ -17,17 +17,17 @@
 
 # If the AI passes through all 3 rules and still cannot find a 100% safe square to open,
 # then it will calculate the probability of each square using the third rule's results
-
-def get_surrounding(xcoord, ycoord):
-    arr = [[xcoord - 1, ycoord - 1], [xcoord, ycoord - 1], [xcoord + 1, ycoord - 1],\
-        [xcoord - 1, ycoord], [xcoord + 1, ycoord],
-        [xcoord - 1, ycoord + 1], [xcoord, ycoord + 1], [xcoord + 1, ycoord + 1]]
-    tmp = [[xcoord - 1, ycoord - 1], [xcoord, ycoord - 1], [xcoord + 1, ycoord - 1],\
-        [xcoord - 1, ycoord], [xcoord + 1, ycoord],
-        [xcoord - 1, ycoord + 1], [xcoord, ycoord + 1], [xcoord + 1, ycoord + 1]]
+def get_surrounding(square, board):
+    xcoord = square.xcoord
+    ycoord = square.ycoord
+    arr = [[xcoord - 1, ycoord - 1], [xcoord, ycoord - 1], [xcoord + 1, ycoord - 1],
+           [xcoord - 1, ycoord], [xcoord + 1, ycoord],
+           [xcoord - 1, ycoord + 1], [xcoord, ycoord + 1], [xcoord + 1, ycoord + 1]]
+    tmp = [[xcoord - 1, ycoord - 1], [xcoord, ycoord - 1], [xcoord + 1, ycoord - 1],
+           [xcoord - 1, ycoord], [xcoord + 1, ycoord],
+           [xcoord - 1, ycoord + 1], [xcoord, ycoord + 1], [xcoord + 1, ycoord + 1]]
     # print(tmp[7][1])
     k = 0
-    print(tmp)
     for i in tmp:
         if i[0] < 0 or i[0] > 7:
             arr.remove(i)
@@ -37,55 +37,51 @@ def get_surrounding(xcoord, ycoord):
             continue
         k += 1
 
-    return arr
-
-    # print(tmp)
-    # print(tmp[i])
-    # print(k)
-    # print(i)
-    # if tmp[i][0] < 0 or tmp[i][0] > 7:
-    #     tmp.pop(k)
-    #     print("first")
-    #     i -= 1
-    #     continue
-    # if tmp[i][1] < 0 or tmp[i][1] > 7:
-    #     tmp.pop(k)
-    #     print("second")
-    #     i -= 1
-    #     continue
-    # k += 1
+    main_arr = []
+    for j in arr:
+        main_arr.append(board.arr[(j[0]) + (j[1] * 10)])
+    print(main_arr)
+    for j in main_arr:
+        print(j.xcoord)
+        print(j.ycoord)
+        print("\n")
+    return main_arr
 
 
-    # if xcoord != 0 or 7:
-    #     if ycoord != 0 or 7:
-    #         return [(xcoord - 1, ycoord - 1), (xcoord, ycoord - 1), (xcoord + 1, ycoord - 1),
-    #                 (xcoord - 1, ycoord), (xcoord + 1, ycoord),
-    #                 (xcoord - 1, ycoord + 1), (xcoord, ycoord + 1), (xcoord + 1, ycoord + 1)]
-    #     elif ycoord % 8 == 0:
-    #         return [(xcoord - 1, ycoord), (xcoord + 1, ycoord),
-    #                 (xcoord - 1, ycoord + 1), (xcoord, ycoord + 1), (xcoord + 1, ycoord + 1)]
-    #     else:
-    #         return [(xcoord - 1, ycoord - 1), (xcoord, ycoord - 1), (xcoord + 1, ycoord - 1),
-    #                 (xcoord - 1, ycoord), (xcoord + 1, ycoord)]
-    # elif xcoord == 0:
-    #     if ycoord != 0 or 7:
-    #         return [(xcoord, ycoord - 1), (xcoord + 1, ycoord - 1),
-    #                 (xcoord + 1, ycoord),
-    #                 (xcoord, ycoord + 1), (xcoord + 1, ycoord + 1)]
-    #     elif ycoord == 0:
-    #         return [(xcoord + 1, ycoord),
-    #                 (xcoord, ycoord + 1), (xcoord + 1, ycoord + 1)]
-    #     else:
-    #         return [(xcoord, ycoord - 1), (xcoord + 1, ycoord - 1),
-    #                 (xcoord + 1, ycoord)]
-    # else:
-    #     if ycoord != 0 or 7:
-    #         return [(xcoord - 1, ycoord - 1), (xcoord, ycoord - 1),
-    #                 (xcoord - 1, ycoord),
-    #                 (xcoord - 1, ycoord + 1), (xcoord, ycoord + 1)]
-    #     elif ycoord == 0:
-    #         return [(xcoord - 1, ycoord),
-    #                 (xcoord - 1, ycoord + 1), (xcoord, ycoord + 1)]
-    #     else:
-    #         return [(xcoord - 1, ycoord - 1), (xcoord, ycoord - 1)
-    #                 (xcoord - 1, ycoord)]
+# Find neighbouring unopened squares:
+def find_unopened(neighbouring_squares, board):
+    unopened_neighbouring_squares = []
+    for i in neighbouring_squares:
+        if i.status == 9:
+            unopened_neighbouring_squares.append(i)
+    return unopened_neighbouring_squares
+
+
+# Rule 1: (will only be called for numbered squares)
+def rule1(square, board):
+    unopened = find_unopened(get_surrounding(square, board), board)
+    print(unopened)
+    for j in unopened:
+        print(j.xcoord)
+        print(j.ycoord)
+        print("\n")
+
+    if len(unopened) == square.status:
+        for i in unopened:
+            i.flag()
+
+
+# Find the numbered squares in board:
+def find_numbered(board):
+    numbered_squares = []
+    for k in range(64):
+        if 1 <= board.arr[k].status <= 6:
+            numbered_squares.append(board.arr[k])
+
+    return numbered_squares
+
+
+def go_for_rule1(board):
+    numbered_squares = find_numbered(board)
+    for i in numbered_squares:
+        rule1(i, board)

@@ -3,14 +3,14 @@ from square import Square
 
 
 class Board:
-    arr = numpy.empty(64, dtype=object)
+    arr = numpy.empty(64, dtype=Square)
 
     def __init__(self):
         k = -1
-        for i in range(8):
-            for j in range(8):
+        for y in range(8):
+            for x in range(8):
                 k += 1
-                self.arr[k] = Square(i, j, 10)
+                self.arr[k] = Square(x, y, 10)
 
     def __str__(self):
         to_string = ""
