@@ -27,7 +27,6 @@ def get_surrounding(square, board):
            [xcoord - 1, ycoord], [xcoord + 1, ycoord],
            [xcoord - 1, ycoord + 1], [xcoord, ycoord + 1], [xcoord + 1, ycoord + 1]]
     # print(tmp[7][1])
-    k = 0
     for i in tmp:
         if i[0] < 0 or i[0] > 7:
             arr.remove(i)
@@ -35,11 +34,10 @@ def get_surrounding(square, board):
         if i[1] < 0 or i[1] > 7:
             arr.remove(i)
             continue
-        k += 1
 
     main_arr = []
     for j in arr:
-        main_arr.append(board.arr[(j[0]) + (j[1] * 10)])
+        main_arr.append(board.arr[(j[0]) + (j[1] * 8)])
     print(main_arr)
     for j in main_arr:
         print(j.xcoord)
@@ -60,12 +58,6 @@ def find_unopened(neighbouring_squares, board):
 # Rule 1: (will only be called for numbered squares)
 def rule1(square, board):
     unopened = find_unopened(get_surrounding(square, board), board)
-    print(unopened)
-    for j in unopened:
-        print(j.xcoord)
-        print(j.ycoord)
-        print("\n")
-
     if len(unopened) == square.status:
         for i in unopened:
             i.flag()
