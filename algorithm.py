@@ -38,11 +38,6 @@ def get_surrounding(square, board):
     main_arr = []
     for j in arr:
         main_arr.append(board.arr[(j[0]) + (j[1] * 8)])
-    print(main_arr)
-    for j in main_arr:
-        print(j.xcoord)
-        print(j.ycoord)
-        print("\n")
     return main_arr
 
 
