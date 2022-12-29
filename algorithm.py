@@ -1,5 +1,6 @@
 # The algorithm will be split into 3 rules, the AI will go through each,
 # if one rule does apply, then it will act upon it without having to go through the other rules
+import actions
 
 # RULE 1:
 # If the number of buttons around a numbered square are equal to the status of the numbered square,
@@ -17,6 +18,9 @@
 
 # If the AI passes through all 3 rules and still cannot find a 100% safe square to open,
 # then it will calculate the probability of each square using the third rule's results
+
+to_be_flagged = []
+
 def get_surrounding(square, board):
     xcoord = square.xcoord
     ycoord = square.ycoord
@@ -45,7 +49,7 @@ def get_surrounding(square, board):
 def find_unopened(neighbouring_squares, board):
     unopened_neighbouring_squares = []
     for i in neighbouring_squares:
-        if i.status == 9:
+        if i.status == 9 or i.status == 11:
             unopened_neighbouring_squares.append(i)
     return unopened_neighbouring_squares
 
@@ -55,7 +59,9 @@ def rule1(square, board):
     unopened = find_unopened(get_surrounding(square, board), board)
     if len(unopened) == square.status:
         for i in unopened:
-            i.flag()
+            x = [i.xcoord, i.ycoord]
+            print(x)
+            to_be_flagged.append(i)
 
 
 # Find the numbered squares in board:
@@ -72,3 +78,12 @@ def go_for_rule1(board):
     numbered_squares = find_numbered(board)
     for i in numbered_squares:
         rule1(i, board)
+    go_for_flag(to_be_flagged)
+
+
+def go_for_flag(flags):
+    flags = set(flags)
+    print("new: ")
+    for i in flags:
+        i.flag()
+        actions.flag_click(i)

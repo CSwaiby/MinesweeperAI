@@ -11,7 +11,6 @@ def check_unopened():
     for pos in pyautogui.locateAllOnScreen('button.png', confidence=0.9, grayscale=True):
         # left.append(int((pos.left - 555)/32))
         # top.append(int((pos.top - 230)/32))
-        # new_coords = [int((pos.top - 230)/32), int((pos.left - 555)/32)]
         unopened.append([int((pos.top - 230)/32), int((pos.left - 555)/32)])
 
     # print(top)
