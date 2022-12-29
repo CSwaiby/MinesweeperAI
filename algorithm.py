@@ -20,6 +20,8 @@ import actions
 # then it will calculate the probability of each square using the third rule's results
 
 to_be_flagged = []
+to_be_clicked = []
+
 
 def get_surrounding(square, board):
     xcoord = square.xcoord
@@ -45,25 +47,6 @@ def get_surrounding(square, board):
     return main_arr
 
 
-# Find neighbouring unopened squares:
-def find_unopened(neighbouring_squares, board):
-    unopened_neighbouring_squares = []
-    for i in neighbouring_squares:
-        if i.status == 9 or i.status == 11:
-            unopened_neighbouring_squares.append(i)
-    return unopened_neighbouring_squares
-
-
-# Rule 1: (will only be called for numbered squares)
-def rule1(square, board):
-    unopened = find_unopened(get_surrounding(square, board), board)
-    if len(unopened) == square.status:
-        for i in unopened:
-            x = [i.xcoord, i.ycoord]
-            print(x)
-            to_be_flagged.append(i)
-
-
 # Find the numbered squares in board:
 def find_numbered(board):
     numbered_squares = []
@@ -74,6 +57,24 @@ def find_numbered(board):
     return numbered_squares
 
 
+# Find neighbouring unopened squares:
+def find_unopened(neighbouring_squares):
+    unopened_neighbouring_squares = []
+    for i in neighbouring_squares:
+        if i.status == 9 or i.status == 11:
+            unopened_neighbouring_squares.append(i)
+    return unopened_neighbouring_squares
+
+
+# Rule 1: (will only be called for numbered squares)
+def rule1(square, board):
+    unopened = find_unopened(get_surrounding(square, board))
+    if len(unopened) == square.status:
+        for i in unopened:
+            to_be_flagged.append(i)
+
+
+# Applying Rule 1:
 def go_for_rule1(board):
     numbered_squares = find_numbered(board)
     for i in numbered_squares:
@@ -83,7 +84,40 @@ def go_for_rule1(board):
 
 def go_for_flag(flags):
     flags = set(flags)
-    print("new: ")
     for i in flags:
         i.flag()
         actions.flag_click(i)
+
+
+# Applying Rule 2:
+def go_for_rule2(board):
+    numbered_squares = find_numbered(board)
+    for i in numbered_squares:
+        rule2(i, board)
+    go_for_click(to_be_clicked)
+
+
+# Rule 2: (will only be called for numbered squares)
+def rule2(square, board):
+    unopened = find_unopened(get_surrounding(square, board))
+    flagged = find_flagged(unopened)
+    if len(flagged) == square.status:
+        non_flagged = [i for i in unopened if i not in flagged]
+        if len(non_flagged) != 0:
+            for j in non_flagged:
+                to_be_clicked.append(j)
+
+
+# Find neighbouring flagged squares:
+def find_flagged(neighbouring_squares):
+    flagged_neighbours = []
+    for i in neighbouring_squares:
+        if i.status == 11:
+            flagged_neighbours.append(i)
+    return flagged_neighbours
+
+
+def go_for_click(clicks):
+    clicks = set(clicks)
+    for i in clicks:
+        actions.left_click(i)

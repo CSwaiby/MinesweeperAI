@@ -43,3 +43,10 @@ def back_to_pixels(x, y):
 def flag_click(square):
     coords = back_to_pixels(square.xcoord, square.ycoord)
     pyautogui.rightClick(coords[0], coords[1])
+
+
+# doubleClick() and not click() since minesweeper.one does allow the double-clicking of numbered squares
+# which will make solving the board much quicker
+def left_click(square):
+    coords = back_to_pixels(square.xcoord, square.ycoord)
+    pyautogui.doubleClick(coords[0], coords[1])
